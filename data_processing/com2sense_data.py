@@ -67,23 +67,27 @@ class Com2SenseDataProcessor(DataProcessor):
         for i in range(len(data)):
             datum = data[i]
             guid = i
-
+            label1 = None
+            label2 = None
+            if split != "test":
+                label1 = datum['label_1']
+                label2 = datum['label_2']
             example1 = Coms2SenseSingleSentenceExample(
                 guid=guid,
                 text=datum['sent_1'],
-                label=['label_1'],
-                domain=['domain'],
-                scenario=['scenario'],
-                numeracy=['numeracy']
+                label=label1,
+                domain=datum['domain'],
+                scenario=datum['scenario'],
+                numeracy=datum['numeracy']
             )
 
             example2 = Coms2SenseSingleSentenceExample(
                 guid=guid,
                 text=datum['sent_2'],
-                label=['label_2'],
-                domain=['domain'],
-                scenario=['scenario'],
-                numeracy=['numeracy']
+                label=label2,
+                domain=datum['domain'],
+                scenario=datum['scenario'],
+                numeracy=datum['numeracy']
             )
             
             examples.append(example1)
