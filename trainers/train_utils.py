@@ -9,6 +9,7 @@ from typing import List, Optional, Union
 
 import tqdm
 import numpy as np
+from sklearn.metrics import precision_recall_fscore_support
 
 import torch
 from transformers import (
@@ -30,7 +31,9 @@ def evaluate_standard(preds, labels, scoring_method):
     # and F1 score for the predictions and gold labels.
     # Please also make your sci-kit learn scores are computed
     # using `scoring_method` for the `average` argument.
-    raise NotImplementedError("Please finish the TODO!")
+    acc = np.sum(labels==preds)/len(preds)
+    prec, recall, f1, _ = precision_recall_fscore_support(labels, preds, average=scoring_method)
+
     # End of TODO
     ########################################################
 
@@ -46,7 +49,12 @@ def pairwise_accuracy(guids, preds, labels):
     # statement coming from the same complementary
     # pair is identical. You can simply pair the these
     # predictions and labels w.r.t the `guid`. 
-    raise NotImplementedError("Please finish the TODO!")
+    count = 0
+    for g in range(int(len(guids)/2)):
+        index = g*2
+        if preds[index]==labels[index] and preds[index+1]==labels[index+1]:
+            count+=1
+    acc = count/(len(guids)/2)
     # End of TODO
     ########################################################
      
