@@ -70,20 +70,15 @@ class SemEvalDataProcessor(DataProcessor):
                     text = row['Correct Statement'],
                     label = 1,
                     right_reason1 = row['Right Reason1'],
-                    right_reason2 = row['Right Reason1'],
-                    right_reason3 = row['Right Reason1'],
-                    confusing_reason1 = row['Confusing Reason1'],
-                    confusing_reason2 = row['Confusing Reason1'], 
+                    right_reason2 = row['Right Reason2'],
+                    right_reason3 = row['Right Reason3'],
                 )
                 new_example_incorrect = SemEvalSingleSentenceExample(
                     guid = i,
                     text = row['Incorrect Statement'],
                     label = 0,
-                    right_reason1 = row['Right Reason1'],
-                    right_reason2 = row['Right Reason1'],
-                    right_reason3 = row['Right Reason1'],
                     confusing_reason1 = row['Confusing Reason1'],
-                    confusing_reason2 = row['Confusing Reason1'], 
+                    confusing_reason2 = row['Confusing Reason2'], 
                 )
                 examples.append(new_example_correct)
                 examples.append(new_example_incorrect)
