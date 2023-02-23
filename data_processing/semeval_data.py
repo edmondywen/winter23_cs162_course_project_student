@@ -58,7 +58,41 @@ class SemEvalDataProcessor(DataProcessor):
         # 5. For the guid, simply use the row number (0-
         # indexed) for each data instance.
         # Use the same guid for statements from the same complementary pair.
-        raise NotImplementedError("Please finish the TODO!")
+        
+        csv_path = os.path.join(data_dir, split+".csv")
+        i = 0
+
+        with open(csv_path, newline='\n') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                new_example_correct = SemEvalSingleSentenceExample(
+                    guid = i,
+                    text = row['Correct Statement'],
+                    label = 1,
+                    right_reason1 = row['Right Reason1'],
+                    right_reason2 = row['Right Reason1'],
+                    right_reason3 = row['Right Reason1'],
+                    confusing_reason1 = row['Confusing Reason1'],
+                    confusing_reason2 = row['Confusing Reason1'], 
+                )
+                new_example_incorrect = SemEvalSingleSentenceExample(
+                    guid = i,
+                    text = row['Incorrect Statement'],
+                    label = 0,
+                    right_reason1 = row['Right Reason1'],
+                    right_reason2 = row['Right Reason1'],
+                    right_reason3 = row['Right Reason1'],
+                    confusing_reason1 = row['Confusing Reason1'],
+                    confusing_reason2 = row['Confusing Reason1'], 
+                )
+                examples.append(new_example_correct)
+                examples.append(new_example_incorrect)
+                i+=1
+            
+
+            
+            
+            
         # End of TODO.
         ##################################################
 
