@@ -70,8 +70,8 @@ class Com2SenseDataProcessor(DataProcessor):
             label1 = None
             label2 = None
             if split != "test":
-                label1 = datum['label_1']
-                label2 = datum['label_2']
+                label1 = 1 if datum['label_1'] == "True" else 0
+                label2 = 1 if datum['label_2'] == "True" else 0
             example1 = Coms2SenseSingleSentenceExample(
                 guid=guid,
                 text=datum['sent_1'],
