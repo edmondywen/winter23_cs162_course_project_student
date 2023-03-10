@@ -27,6 +27,7 @@ import pprint
 
 import numpy as np
 import torch
+import torch.nn.functional as F 
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, TensorDataset
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
@@ -218,14 +219,24 @@ def train(args, train_dataset, model, tokenizer):
             # (2) Compute the loss (store as `loss` variable)
             # Hint: See the HuggingFace transformers doc to properly get
             # the loss from the model outputs.
+            # if args.training_phase == "pretrain":
             output = model(inputs["input_ids"], 
                     token_type_ids=inputs["token_type_ids"], 
                     attention_mask=inputs["attention_mask"], 
                     labels=inputs["labels"])
+            # else:
+            #     output = model(inputs["input_ids"], 
+            #             token_type_ids=inputs["token_type_ids"], 
+            #             attention_mask=inputs["attention_mask"], 
+            #             )
+                
             loss = output[0]
+            
             if args.n_gpu > 1:
                 # Applies mean() to average on multi-gpu parallel training.
-                loss = loss.mean()
+                loss = loss.mean()[0]
+            
+            
 
             # Handles the `gradient_accumulation_steps`, i.e., every such
             # steps we update the model, so the loss needs to be devided.
@@ -234,7 +245,10 @@ def train(args, train_dataset, model, tokenizer):
 
             # (3) Implement the backward for loss propagation
             
-            loss.backward()
+            if args.n_gpu > 1:
+                loss.sum.backward()
+            else:
+                loss.backward()
 
             # End of TODO.
             ##################################################
@@ -404,7 +418,7 @@ def evaluate(args, model, tokenizer, prefix="", data_split="test"):
 
             # (4) Convert logits into probability distribution and relabel as `logits`
             # Hint: Refer to Softmax function
-            logits = torch.nn.Softmax(logits)
+            logits = F.softmax(logits)
 
             # End of TODO.
             ##################################################
@@ -631,13 +645,14 @@ def main():
 
     if args.training_phase == "pretrain":
         # (3) Load MLM model if pretraining (Optional)
+        model = AutoModelForSequenceClassification.from_pretrained(selected_model)
         # Complete only if doing MLM pretraining for improving performance
         # raise NotImplementedError("Please finish the TODO!")
         
         pass
     else:
         # (4) Load sequence classification model otherwise
-        model = AutoModel.from_pretrained(selected_model) # https://huggingface.co/docs/transformers/model_doc/auto
+        model = AutoModelForSequenceClassification.from_pretrained(selected_model) # https://huggingface.co/docs/transformers/model_doc/auto
         # raise NotImplementedError("Please finish the TODO!")
 
     # End of TODO.
