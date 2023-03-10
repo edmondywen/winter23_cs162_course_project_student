@@ -386,7 +386,6 @@ def evaluate(args, model, tokenizer, prefix="", data_split="test"):
                     token_type_ids=inputs["token_type_ids"], 
                     attention_mask=inputs["attention_mask"], 
                     labels=inputs["labels"])
-            # raise NotImplementedError("Please finish the TODO!")
 
             if has_label or args.training_phase == "pretrain":
                 # (2) If label present or pretraining, compute the loss and prediction logits
@@ -396,16 +395,16 @@ def evaluate(args, model, tokenizer, prefix="", data_split="test"):
                 # indexing properly the outputs as tuples.
                 # Make sure to perform a `.mean()` on the eval loss and add it
                 # to the `eval_loss` variable.
-                loss = outputs[0]
-                # raise NotImplementedError("Please finish the TODO!")
+                eval_loss += outputs[0].mean()
+                logits = outputs[1]
             else:
                 # (3) If labels not present, only compute the prediction logits
                 # Label the logits as `logits`
-                raise NotImplementedError("Please finish the TODO!")
+                logits = outputs[1]
 
             # (4) Convert logits into probability distribution and relabel as `logits`
             # Hint: Refer to Softmax function
-            raise NotImplementedError("Please finish the TODO!")
+            logits = torch.nn.Softmax(logits)
 
             # End of TODO.
             ##################################################
@@ -621,18 +620,25 @@ def main():
     # for essential args.
 
     # (1) Load config
-    raise NotImplementedError("Please finish the TODO!")
+    # raise NotImplementedError("Please finish the TODO!")
+    
+    selected_model = 'bert-base-uncased'
+    config = AutoConfig.from_pretrained(selected_model)
+    
 
     # (2) Load tokenizer
-    raise NotImplementedError("Please finish the TODO!")
+    tokenizer = AutoTokenizer.from_pretrained(selected_model)
 
     if args.training_phase == "pretrain":
         # (3) Load MLM model if pretraining (Optional)
         # Complete only if doing MLM pretraining for improving performance
-        raise NotImplementedError("Please finish the TODO!")
+        # raise NotImplementedError("Please finish the TODO!")
+        
+        pass
     else:
         # (4) Load sequence classification model otherwise
-        raise NotImplementedError("Please finish the TODO!")
+        model = AutoModel.from_pretrained(selected_model) # https://huggingface.co/docs/transformers/model_doc/auto
+        # raise NotImplementedError("Please finish the TODO!")
 
     # End of TODO.
     ##################################################
