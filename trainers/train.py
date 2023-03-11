@@ -27,7 +27,6 @@ import pprint
 
 import numpy as np
 import torch
-import torch.nn.functional as F 
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, TensorDataset
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
@@ -229,14 +228,11 @@ def train(args, train_dataset, model, tokenizer):
             #             token_type_ids=inputs["token_type_ids"], 
             #             attention_mask=inputs["attention_mask"], 
             #             )
-                
             loss = output[0]
             
             if args.n_gpu > 1:
                 # Applies mean() to average on multi-gpu parallel training.
-                loss = loss.mean()[0]
-            
-            
+                loss = loss.mean() #[0]
 
             # Handles the `gradient_accumulation_steps`, i.e., every such
             # steps we update the model, so the loss needs to be devided.
@@ -420,7 +416,11 @@ def evaluate(args, model, tokenizer, prefix="", data_split="test"):
 
             # (4) Convert logits into probability distribution and relabel as `logits`
             # Hint: Refer to Softmax function
-            logits = F.softmax(logits)
+
+            sm_fun = torch.nn.Softmax(dim=1)
+
+            logits = sm_fun(logits)
+            # logits = F.softmax(logits, dim=-1)
 
             # End of TODO.
             ##################################################
