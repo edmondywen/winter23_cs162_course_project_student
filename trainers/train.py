@@ -395,11 +395,6 @@ def evaluate(args, model, tokenizer, prefix="", data_split="test"):
             ##################################################
             # TODO: Evaluation Loop
             # (1) Run forward and get the model outputs
-            
-            outputs = model(inputs["input_ids"], 
-                    token_type_ids=inputs["token_type_ids"], 
-                    attention_mask=inputs["attention_mask"], 
-                    labels=inputs["labels"])
 
             if has_label or args.training_phase == "pretrain":
                 # (2) If label present or pretraining, compute the loss and prediction logits
@@ -409,12 +404,19 @@ def evaluate(args, model, tokenizer, prefix="", data_split="test"):
                 # indexing properly the outputs as tuples.
                 # Make sure to perform a `.mean()` on the eval loss and add it
                 # to the `eval_loss` variable.
+                outputs = model(inputs["input_ids"], 
+                    token_type_ids=inputs["token_type_ids"], 
+                    attention_mask=inputs["attention_mask"], 
+                    labels=inputs["labels"])
                 eval_loss += outputs[0].mean()
                 logits = outputs[1]
             else:
                 # (3) If labels not present, only compute the prediction logits
                 # Label the logits as `logits`
-                logits = outputs[1]
+                outputs = model(inputs["input_ids"], 
+                    token_type_ids=inputs["token_type_ids"], 
+                    attention_mask=inputs["attention_mask"])
+                logits = outputs[0]
 
             # (4) Convert logits into probability distribution and relabel as `logits`
             # Hint: Refer to Softmax function
