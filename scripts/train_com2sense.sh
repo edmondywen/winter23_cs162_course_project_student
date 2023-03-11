@@ -16,7 +16,8 @@ python3 -m trainers.train \
   --max_seq_length 128 \
   --output_dir "${TASK_NAME}/ckpts" \
   --task_name "${TASK_NAME}" \
-	@@ -21,8 +20,10 @@ python3 -m trainers.train \
+  --data_dir "${DATA_DIR}" \
+  --overwrite_output_dir \
   --save_steps 20 \
   --logging_steps 5 \
   --warmup_steps 100 \
