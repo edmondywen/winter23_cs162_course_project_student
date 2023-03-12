@@ -649,9 +649,6 @@ def main():
         # (3) Load MLM model if pretraining (Optional)
         model = AutoModelForSequenceClassification.from_pretrained(selected_model)
         # Complete only if doing MLM pretraining for improving performance
-        # raise NotImplementedError("Please finish the TODO!")
-        
-        pass
     else:
         # (4) Load sequence classification model otherwise
         model = AutoModelForSequenceClassification.from_pretrained(selected_model) # https://huggingface.co/docs/transformers/model_doc/auto
