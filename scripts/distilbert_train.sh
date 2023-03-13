@@ -17,11 +17,11 @@ python3 -m trainers.train_distilbert_base_uncased \
   --task_name "${TASK_NAME}" \
   --data_dir "${DATA_DIR}" \
   --overwrite_output_dir \
-  --save_steps 20 \
+  --save_steps 200 \
   --logging_steps 5 \
   --warmup_steps 100 \
   --eval_split "dev" \
   --score_average_method "binary" \
-  --iters_to_eval 20 40 \
+  --iters_to_eval 4000 \
   --overwrite_output_dir \
   # --max_eval_steps 1000 \
