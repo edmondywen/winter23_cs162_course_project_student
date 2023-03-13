@@ -1,9 +1,8 @@
 TASK_NAME="com2sense"
 DATA_DIR="datasets/com2sense"
-MODEL_TYPE="bert-base-cased"
+MODEL_TYPE="distilbert"
 
-
-python3 -m trainers.train \
+python3 -m trainers.train_distilbert_base_uncased \
   --model_name_or_path ${MODEL_TYPE} \
   --do_not_load_optimizer \
   --do_train \
