@@ -8,7 +8,7 @@ python3 -m trainers.train_distilbert_base_uncased \
   --do_train \
   --do_eval \
   --evaluate_during_training \
-  --per_gpu_train_batch_size 4 \
+  --per_gpu_train_batch_size 32 \
   --per_gpu_eval_batch_size 1 \
   --learning_rate 1e-5 \
   --num_train_epochs 100.0 \

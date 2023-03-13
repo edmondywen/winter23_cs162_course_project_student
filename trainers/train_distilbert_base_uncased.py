@@ -220,11 +220,9 @@ def train(args, train_dataset, model, tokenizer):
             # Hint: See the HuggingFace transformers doc to properly get
             # the loss from the model outputs.
             # if args.training_phase == "pretrain":
-            print("---------", model)
-            print(inputs)
+            # print("---------", model)
+            # print(inputs)
             output = model(inputs["input_ids"], 
-                    token_type_ids=inputs["token_type_ids"], 
-                    attention_mask=inputs["attention_mask"], 
                     labels=inputs["labels"])
             loss = output[0]
             
@@ -399,8 +397,6 @@ def evaluate(args, model, tokenizer, prefix="", data_split="test"):
                 # Make sure to perform a `.mean()` on the eval loss and add it
                 # to the `eval_loss` variable.
                 outputs = model(inputs["input_ids"], 
-                    token_type_ids=inputs["token_type_ids"], 
-                    attention_mask=inputs["attention_mask"], 
                     labels=inputs["labels"])
                 eval_loss += outputs[0].mean()
                 logits = outputs[1]
