@@ -1,6 +1,6 @@
 TASK_NAME="com2sense"
 DATA_DIR="datasets/com2sense"
-MODEL_TYPE="bert-base-cased"
+MODEL_TYPE="distilroberta-base"
 
 
 python3 -m trainers.train \
@@ -18,7 +18,7 @@ python3 -m trainers.train \
   --task_name "${TASK_NAME}" \
   --data_dir "${DATA_DIR}" \
   --overwrite_output_dir \
-  --save_steps 200 \
+  --save_steps 20 \
   --logging_steps 5 \
   --warmup_steps 100 \
   --eval_split "dev" \

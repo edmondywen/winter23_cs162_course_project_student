@@ -1,6 +1,6 @@
 TASK_NAME="com2sense"
 DATA_DIR="datasets/com2sense"
-MODEL_TYPE="bert-base-cased"
+MODEL_TYPE="distilroberta-base"
 
 
 python3 -m trainers.train \
