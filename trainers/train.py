@@ -639,6 +639,12 @@ def main():
     # raise NotImplementedError("Please finish the TODO!")
     
     selected_model = 'bert-base-uncased'
+    if 'model_name_or_path' in args:
+        selected_model = args.model_name_or_path
+        logger.info("Training model %s", selected_model)
+    else:
+        logger.info("No model selected, training bert base uncased")
+
     config = AutoConfig.from_pretrained(selected_model)
     
 
