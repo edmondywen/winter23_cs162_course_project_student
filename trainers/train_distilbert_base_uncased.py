@@ -633,7 +633,7 @@ def main():
     # (1) Load config
     # raise NotImplementedError("Please finish the TODO!")
     
-    selected_model = 'distilbert-base-uncased-finetuned-sst-2-english'
+    selected_model = 'microsoft/deberta-large'
     config = AutoConfig.from_pretrained(selected_model)
     
 
