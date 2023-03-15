@@ -404,9 +404,7 @@ def evaluate(args, model, tokenizer, prefix="", data_split="test"):
             else:
                 # (3) If labels not present, only compute the prediction logits
                 # Label the logits as `logits`
-                outputs = model(inputs["input_ids"], 
-                    token_type_ids=inputs["token_type_ids"], 
-                    attention_mask=inputs["attention_mask"])
+                outputs = model(inputs["input_ids"])
                 logits = outputs[0]
 
             # (4) Convert logits into probability distribution and relabel as `logits`
@@ -633,7 +631,7 @@ def main():
     # (1) Load config
     # raise NotImplementedError("Please finish the TODO!")
     
-    selected_model = 'microsoft/deberta-large'
+    selected_model = 'distilbert-base-uncased-finetuned-sst-2-english'
     config = AutoConfig.from_pretrained(selected_model)
     
 
