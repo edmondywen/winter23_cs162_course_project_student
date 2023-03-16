@@ -406,6 +406,7 @@ def evaluate(args, model, tokenizer, prefix="", data_split="test"):
                     labels=inputs["labels"])
                 eval_loss += outputs[0].mean()
                 logits = outputs[1]
+                # print(outputs, eval_loss, logits)
             else:
                 # (3) If labels not present, only compute the prediction logits
                 # Label the logits as `logits`
@@ -638,14 +639,13 @@ def main():
     # (1) Load config
     # raise NotImplementedError("Please finish the TODO!")
     
-    selected_model = 'bert-base-uncased'
+    selected_model = 'microsoft/deberta-v3-base'
     if 'model_name_or_path' in args:
         selected_model = args.model_name_or_path
         logger.info("Training model %s", selected_model)
     else:
         logger.info("No model selected, training bert base uncased")
-
-    config = AutoConfig.from_pretrained(selected_model)
+        config = AutoConfig.from_pretrained(selected_model)
     
 
     # (2) Load tokenizer
