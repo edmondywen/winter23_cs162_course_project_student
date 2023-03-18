@@ -645,7 +645,7 @@ def main():
         logger.info("Training model %s", selected_model)
         config = AutoConfig.from_pretrained(selected_model)
     else:
-        logger.info("No model selected, training bert base uncased")
+        logger.info("No model selected, training microsoft deberta v3")
         config = AutoConfig.from_pretrained(selected_model)
     
 

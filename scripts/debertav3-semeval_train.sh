@@ -1,7 +1,7 @@
 TASK_NAME="com2sense"
-DATA_DIR="datasets/com2sense"
+DATA_DIR="datasets/semeval_2020_task4"
 MODEL_TYPE="microsoft/deberta-v3-base"
-MODEL_PATH="/Users/edmond/Documents/cs162/winter23_cs162_course_project_student/outputs/com2sense/ckpts/pytorch_model.bin"
+MODEL_PATH="/Users/edmond/Documents/cs162/winter23_cs162_course_project_student/outputs/com2sense/ckpts"
 
 python3 -m trainers.train \
   --model_name_or_path ${MODEL_TYPE} \
