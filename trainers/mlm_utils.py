@@ -59,6 +59,9 @@ def mask_tokens(inputs, tokenizer, args, special_tokens_mask=None):
     probability_matrix.masked_fill_(special_tokens_mask, value=0.0)
     masked_indices = torch.bernoulli(probability_matrix).bool()
 
+    if is_on_gpu:
+        masked_indices = masked_indices.cuda()
+
     # The "non-masked" parts in labels should be filled with ignore index (args.mlm_ignore_index).
     labels.masked_fill_((masked_indices == False),value = args.mlm_ignore_index)
     # raise NotImplementedError("Please finish the TODO!")
@@ -76,7 +79,10 @@ def mask_tokens(inputs, tokenizer, args, special_tokens_mask=None):
     indices_replaced = ( masked_probs <= 0.8)
     # mask is last token
     # mask_token_index = (inputs == tokenizer.mask_token)[0].nonzero(as_tuple=True)[0]
-    # print(" token id ",tokenizer.mask_token_id)
+    print(" token id ",tokenizer.mask_token_id)
+    num_tokens = tokenizer.mask_token_id+1
+    #tokenizer.mask_token_id is the last number
+
     probability_matrix.masked_fill_(indices_replaced, value=tokenizer.mask_token_id ) # value = tokenizer.mask_token??
     # raise NotImplementedError("Please finish the TODO!")
 
@@ -85,16 +91,14 @@ def mask_tokens(inputs, tokenizer, args, special_tokens_mask=None):
     # Hint: make sure that the random word replaced positions are not overlapping
     # with those of the masked positions, i.e. "~indices_replaced".
     random_word_indices = ((masked_probs >0.8) <=0.9)
+
     if is_on_gpu:
         random_word_indices = random_word_indices.cuda()
+    random_words = torch.randint(num_tokens, (probability_matrix.size()))
     if is_on_gpu:
-        random_words = np.random.choice(inputs.cpu().flatten(),probability_matrix.shape)
+        probability_matrix.masked_scatter_(random_word_indices, random_words.float().cuda())
     else:
-        random_words = np.random.choice(inputs.flatten(),probability_matrix.shape)
-    if is_on_gpu:
-        probability_matrix.masked_scatter_(random_word_indices, torch.from_numpy(random_words).float().cuda())
-    else:
-        probability_matrix.masked_scatter_(random_word_indices, torch.from_numpy(random_words).float())
+        probability_matrix.masked_scatter_(random_word_indices, random_words.float())
 
     # raise NotImplementedError("Please finish the TODO!")
     inputs = probability_matrix.long()
@@ -142,13 +146,15 @@ if __name__ == "__main__":
     input_sentence = "I am a good student and I love NLP."
     input_ids = tokenizer.encode(input_sentence)
     input_ids = torch.Tensor(input_ids).long().unsqueeze(0)
+    # print("input ids",input_ids)
     
     inputs, labels = mask_tokens(input_ids, tokenizer, args,
                                  special_tokens_mask=None)
     inputs, labels = list(inputs.numpy()[0]), list(labels.numpy()[0])
     ans_inputs = [101, 146, 103, 170, 103, 2377, 103, 146, 1567, 103, 2101, 119, 102]
     ans_labels = [-100, -100, 1821, -100, 1363, -100, 1105, -100, -100, 21239, -100, -100, -100]
-    
+    print("inputs",inputs)
+    print(labels)
     if inputs == ans_inputs and labels == ans_labels:
         print("Your `mask_tokens` function is correct!")
     else:
