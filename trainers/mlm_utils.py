@@ -51,7 +51,7 @@ def mask_tokens(inputs, tokenizer, args, special_tokens_mask=None):
     # function `masked_fill_`, and `torch.bernoulli`.
     # Check the inputs to the bernoulli function and use other hinted functions
     # to construct such inputs.
-    is_on_gpu = args.device == "gpu"
+    is_on_gpu = torch.cuda.is_available()
     probability_matrix = torch.full(labels.size(), args.mlm_probability)
     if is_on_gpu:
         probability_matrix = probability_matrix.cuda()
@@ -79,7 +79,7 @@ def mask_tokens(inputs, tokenizer, args, special_tokens_mask=None):
     indices_replaced = ( masked_probs <= 0.8)
     # mask is last token
     # mask_token_index = (inputs == tokenizer.mask_token)[0].nonzero(as_tuple=True)[0]
-    print(" token id ",tokenizer.mask_token_id)
+    # print(" token id ",tokenizer.mask_token_id)
     num_tokens = tokenizer.mask_token_id+1
     #tokenizer.mask_token_id is the last number
 
