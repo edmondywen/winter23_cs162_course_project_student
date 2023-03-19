@@ -25,7 +25,7 @@ def mask_tokens(inputs, tokenizer, args, special_tokens_mask=None):
     10% random, 10% original.
     inputs should be tokenized token ids with size: (batch size X input length).
     """
-    print("original inputs size",inputs.size())
+    # print("original inputs size",inputs.size())
     # The eventual labels will have the same size of the inputs,
     # with the masked parts the same as the input ids but the rest as
     # args.mlm_ignore_index, so that the cross entropy loss will ignore it.
@@ -51,7 +51,11 @@ def mask_tokens(inputs, tokenizer, args, special_tokens_mask=None):
     # function `masked_fill_`, and `torch.bernoulli`.
     # Check the inputs to the bernoulli function and use other hinted functions
     # to construct such inputs.
+    is_on_gpu = args.device == "gpu"
     probability_matrix = torch.full(labels.size(), args.mlm_probability)
+    if is_on_gpu:
+        probability_matrix = probability_matrix.cuda()
+        special_tokens_mask = special_tokens_mask.cuda()
     probability_matrix.masked_fill_(special_tokens_mask, value=0.0)
     masked_indices = torch.bernoulli(probability_matrix).bool()
 
@@ -63,10 +67,16 @@ def mask_tokens(inputs, tokenizer, args, special_tokens_mask=None):
     # tokenizer.mask_token (e.g. for BERT it is [MASK] for for RoBERTa it is
     # <mask>, check tokenizer documentation for more details)
     # multiply by the masked_indices to only mask the selected indices
-    masked_probs = (torch.rand((masked_indices.size())) * masked_indices.long() )
+    rand_probs = torch.rand((masked_indices.size()))
+    if is_on_gpu:
+        rand_probs = rand_probs.cuda()
+    masked_probs = (rand_probs * masked_indices.long() )
+    if is_on_gpu:
+        masked_probs = masked_probs.cuda()
     indices_replaced = ( masked_probs <= 0.8)
     # mask is last token
     # mask_token_index = (inputs == tokenizer.mask_token)[0].nonzero(as_tuple=True)[0]
+    # print(" token id ",tokenizer.mask_token_id)
     probability_matrix.masked_fill_(indices_replaced, value=tokenizer.mask_token_id ) # value = tokenizer.mask_token??
     # raise NotImplementedError("Please finish the TODO!")
 
@@ -75,10 +85,20 @@ def mask_tokens(inputs, tokenizer, args, special_tokens_mask=None):
     # Hint: make sure that the random word replaced positions are not overlapping
     # with those of the masked positions, i.e. "~indices_replaced".
     random_word_indices = ((masked_probs >0.8) <=0.9)
-    random_words = np.random.choice(inputs.flatten(),probability_matrix.shape)
-    probability_matrix.masked_scatter_(random_word_indices, torch.from_numpy(random_words).float())
-    # raise NotImplementedError("Please finish the TODO!")
+    if is_on_gpu:
+        random_word_indices = random_word_indices.cuda()
+    if is_on_gpu:
+        random_words = np.random.choice(inputs.cpu().flatten(),probability_matrix.shape)
+    else:
+        random_words = np.random.choice(inputs.flatten(),probability_matrix.shape)
+    if is_on_gpu:
+        probability_matrix.masked_scatter_(random_word_indices, torch.from_numpy(random_words).float().cuda())
+    else:
+        probability_matrix.masked_scatter_(random_word_indices, torch.from_numpy(random_words).float())
 
+    # raise NotImplementedError("Please finish the TODO!")
+    inputs = probability_matrix.long()
+    labels = labels
     # End of TODO
     ##################################################
 
@@ -86,9 +106,9 @@ def mask_tokens(inputs, tokenizer, args, special_tokens_mask=None):
     # tokens unchanged
     pass  # Do nothing.
 
-    inputs = probability_matrix.long()
-    print("new inputs size",inputs.size())
-    print("new label size",labels.size())
+
+    # print("new inputs size",inputs.size())
+    # print("new label size",labels.size())
 
 
     return inputs, labels
