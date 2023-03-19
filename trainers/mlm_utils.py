@@ -25,7 +25,7 @@ def mask_tokens(inputs, tokenizer, args, special_tokens_mask=None):
     10% random, 10% original.
     inputs should be tokenized token ids with size: (batch size X input length).
     """
-
+    print("original inputs size",inputs.size())
     # The eventual labels will have the same size of the inputs,
     # with the masked parts the same as the input ids but the rest as
     # args.mlm_ignore_index, so that the cross entropy loss will ignore it.
@@ -55,18 +55,28 @@ def mask_tokens(inputs, tokenizer, args, special_tokens_mask=None):
     masked_indices = torch.bernoulli(probability_matrix).bool()
 
     # The "non-masked" parts in labels should be filled with ignore index (args.mlm_ignore_index).
-    raise NotImplementedError("Please finish the TODO!")
+    labels.masked_fill_((masked_indices == False),value = args.mlm_ignore_index)
+    # raise NotImplementedError("Please finish the TODO!")
 
     # For 80% of the time, we will replace masked input tokens with  the
     # tokenizer.mask_token (e.g. for BERT it is [MASK] for for RoBERTa it is
     # <mask>, check tokenizer documentation for more details)
-    raise NotImplementedError("Please finish the TODO!")
+    # multiply by the masked_indices to only mask the selected indices
+    masked_probs = (torch.rand((masked_indices.size())) * masked_indices.long() )
+    indices_replaced = ( masked_probs <= 0.8)
+    # mask is last token
+    # mask_token_index = (inputs == tokenizer.mask_token)[0].nonzero(as_tuple=True)[0]
+    probability_matrix.masked_fill_(indices_replaced, value=tokenizer.mask_token_id ) # value = tokenizer.mask_token??
+    # raise NotImplementedError("Please finish the TODO!")
 
     # For 10% of the time, we replace masked input tokens with random word.
     # Hint: you may find function `torch.randint` handy.
     # Hint: make sure that the random word replaced positions are not overlapping
     # with those of the masked positions, i.e. "~indices_replaced".
-    raise NotImplementedError("Please finish the TODO!")
+    random_word_indices = ((masked_probs >0.8) <=0.9)
+    random_words = np.random.choice(inputs.flatten(),probability_matrix.shape)
+    probability_matrix.masked_scatter_(random_word_indices, torch.from_numpy(random_words).float())
+    # raise NotImplementedError("Please finish the TODO!")
 
     # End of TODO
     ##################################################
@@ -74,6 +84,11 @@ def mask_tokens(inputs, tokenizer, args, special_tokens_mask=None):
     # For the rest of the time (10% of the time) we will keep the masked input
     # tokens unchanged
     pass  # Do nothing.
+
+    inputs = probability_matrix.long()
+    print("new inputs size",inputs.size())
+    print("new label size",labels.size())
+
 
     return inputs, labels
 
