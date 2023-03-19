@@ -30,6 +30,7 @@ def mask_tokens(inputs, tokenizer, args, special_tokens_mask=None):
     # with the masked parts the same as the input ids but the rest as
     # args.mlm_ignore_index, so that the cross entropy loss will ignore it.
     labels = inputs.clone()
+    # return inputs,labels
 
     # Constructs the special token masks.
     if special_tokens_mask is None:

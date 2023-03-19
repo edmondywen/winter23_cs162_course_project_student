@@ -207,7 +207,6 @@ def train(args, train_dataset, model, tokenizer):
                 inputs["token_type_ids"] = None
 
             if args.training_phase == "pretrain":
-                # pass in args.model_type
                 masked_inputs, lm_labels = mask_tokens(
                     inputs["input_ids"], tokenizer, args)
                 inputs["input_ids"] = masked_inputs
@@ -655,7 +654,7 @@ def main():
 
     if args.training_phase == "pretrain":
         # (3) Load MLM model if pretraining (Optional)
-        model = AutoModelForSequenceClassification.from_pretrained(selected_model)
+        model = AutoModelForMaskedLM.from_pretrained(selected_model)
         # Complete only if doing MLM pretraining for improving performance
     else:
         # (4) Load sequence classification model otherwise
