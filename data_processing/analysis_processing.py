@@ -135,12 +135,12 @@ if __name__ == "__main__":
             # print(examples)
             filtered_domain_examples = list(filter(lambda x: x["domain"] == domain,examples))
             # print(filtered_val_examples)
-            with open(f"./datasets/com2sense/domain/{domain}.json", "w") as outfile:
+            with open(f"./datasets/com2sense/domain/{domain}/dev.json", "w") as outfile:
                 filtered_json = json.dump(filtered_domain_examples, outfile)
     
         for scenario in val_scenario:
             print(scenario)
             filtered_scenario_examples = list(filter(lambda x: x["scenario"] == scenario,examples))
-            with open(f"./datasets/com2sense/scenario/{scenario}.json", "w") as outfile:
+            with open(f"./datasets/com2sense/scenario/{scenario}/dev.json", "w") as outfile:
                 filtered_json = json.dump(filtered_scenario_examples, outfile)
             
